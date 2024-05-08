@@ -3,26 +3,18 @@
 ImageBrightener::ImageBrightener(std::shared_ptr<Image> inputImage): m_inputImage(inputImage) {
 }
 
-int ImageBrightener::BrightenWholeImage() {
+bool ImageBrightener::BrightenWholeImage(int& attenuatedCount) {
     // For brightening, we add a certain grayscale (25) to every pixel.
     // While brightening, some pixels may cross the max brightness. They are
     // called 'attenuated' pixels
-    int attenuatedPixelCount = 0;
-    for (int x = 0; x < m_inputImage->m_rows; x++) {
-        for (int y = 0; y < m_inputImage->m_columns; y++) {
-            if (m_inputImage->pixels[x * m_inputImage->m_columns + y] > (255 - 25)) {
-                ++attenuatedPixelCount;
-                m_inputImage->pixels[x * m_inputImage->m_columns + y] = 255;
-            } else {
-                int pixelIndex = x * m_inputImage->m_columns + y;
-                m_inputImage->pixels[pixelIndex] += 25;
-            }
-        }
-    }
-    return attenuatedPixelCount;
+    auto dummyimage = std::make_shared<const Image>(m_inputImage->m_rows, m_inputImage->m_columns);
+    for (auto pixel = 0; pixel < m_inputImage->m_rows * m_inputImage->m_columns; ++pixel)
+        dummyimage->pixels[pixel] = 25;
+    return AddBrighteningImage(dummyimage, attenuatedCount);
+   
 }
 
-bool ImageBrightener::AddBrighteningImage(std::shared_ptr<Image> imageToAdd, int& attenuatedCount) {
+bool ImageBrightener::AddBrighteningImage(std::shared_ptr<const Image> imageToAdd, int& attenuatedCount) {
     if (imageToAdd->m_rows != m_inputImage->m_rows || imageToAdd->m_columns != m_inputImage->m_columns) {
         return false;
     }
@@ -34,7 +26,7 @@ bool ImageBrightener::AddBrighteningImage(std::shared_ptr<Image> imageToAdd, int
                 ++attenuatedCount;
                 m_inputImage->pixels[pixelIndex] = 255;
             } else {
-                imageToAdd->pixels[pixelIndex] += m_inputImage->pixels[pixelIndex];
+                 m_inputImage->pixels[pixelIndex] += imageToAdd->pixels[pixelIndex];
             }
         }
     }
