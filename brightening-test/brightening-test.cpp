@@ -13,14 +13,14 @@ namespace brighteningtest
 		{
 			auto image = std::make_shared<Image>(2, 2);
 			image->pixels[0] = 45; image->pixels[1] = 55;
-			image->pixels[2] = 65; image->pixels[3] = 254;
+			image->pixels[2] = 75; image->pixels[3] = 254;
 
 			ImageBrightener brightener(image);
 			int attenuatedCount;
 			bool result = brightener.BrightenWholeImage(attenuatedCount);
 			Assert::IsTrue(result);
 			Assert::AreEqual(1, attenuatedCount);
-			Assert::AreEqual(90, int(image->pixels[2]));
+			Assert::AreEqual(100, int(image->pixels[2]));
 		}
 
 		TEST_METHOD(BrightensWithAnotherImage)
