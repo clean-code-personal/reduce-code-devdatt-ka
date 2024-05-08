@@ -16,7 +16,9 @@ namespace brighteningtest
 			image->pixels[2] = 65; image->pixels[3] = 254;
 
 			ImageBrightener brightener(image);
-			int attenuatedCount = brightener.BrightenWholeImage();
+			int attenuatedCount;
+			bool result = brightener.BrightenWholeImage(attenuatedCount);
+			Assert::IsTrue(result);
 			Assert::AreEqual(1, attenuatedCount);
 			Assert::AreEqual(90, int(image->pixels[2]));
 		}
